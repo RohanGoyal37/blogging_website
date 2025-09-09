@@ -1,0 +1,65 @@
+{% extends 'blogs/base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="card-title mb-3">
+                    {% if form.instance.pk %}Edit{% else %}New{% endif %} Post
+                </h3>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="id_title" class="form-label">Title</label>
+                        {{ form.title|add_class:"form-control mb-2" }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_category" class="form-label">Select Category</label>
+                        {{ form.category|add_class:"form-select mb-2" }}
+                    </div>
+
+                    <div class="mb-3" id="newCategoryDiv" style="display: none;">
+                        <label for="id_new_category" class="form-label">Add New Category</label>
+                        {{ form.new_category|add_class:"form-control mb-2" }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_content" class="form-label">Content</label>
+                        {{ form.content|add_class:"form-control mb-2" }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_featured_image" class="form-label">Featured Image</label>
+                        {{ form.featured_image|add_class:"form-control" }}
+                        {% if form.instance.featured_image %}
+                            <div class="mt-2">
+                                <small class="text-muted">Current image: {{ form.instance.featured_image.name }}</small>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <script>
+                        document.getElementById('id_category').addEventListener('change', function() {
+                            const newCategoryDiv = document.getElementById('newCategoryDiv');
+                            if (this.value === 'other') {
+                                newCategoryDiv.style.display = 'block';
+                            } else {
+                                newCategoryDiv.style.display = 'none';
+                                document.getElementById('id_new_category').value = '';
+                            }
+                        });
+                    </script>
+
+                    <button class="btn btn-success w-100">
+                        {% if form.instance.pk %}Update{% else %}Create{% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
