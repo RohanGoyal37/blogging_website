@@ -4,7 +4,8 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
-        <!-- Post Content -->
+
+        <!-- Post Card -->
         <div class="card shadow mb-4 post-detail">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -16,7 +17,8 @@
                         </a>
                         <form action="{% url 'post_delete' post.pk %}" method="POST" class="d-inline">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this post?')">
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('Are you sure you want to delete this post?')">
                                 <i class="bi bi-trash"></i> Delete
                             </button>
                         </form>
@@ -24,21 +26,29 @@
                     {% endif %}
                 </div>
 
+                <!-- Post Meta -->
                 <div class="post-meta mb-4">
                     <span class="me-3">
                         <i class="bi bi-person-circle"></i> {{ post.author.username }}
                     </span>
+
                     <span class="me-3">
                         <i class="bi bi-tag"></i>
-                        <a href="{% url 'category_posts' post.category.slug %}" class="badge-category">
-                            {{ post.category.name }}
-                        </a>
-                        {% if post.tags.all %}
-                            {% for tag in post.tags.all %}
-                                <span class="badge bg-info text-dark ms-1">{{ tag.name }}</span>
-                            {% endfor %}
+                        {% if post.category and post.category.slug %}
+                            <a href="{% url 'category_posts' post.category.slug %}" class="badge-category">
+                                {{ post.category.name }}
+                            </a>
+                        {% else %}
+                            <span class="badge-category text-muted">No Category</span>
                         {% endif %}
+
+                        {% for tag in post.tags.all %}
+                            <span class="badge bg-info text-dark ms-1">{{ tag.name }}</span>
+                        {% empty %}
+                            <span class="text-muted ms-1">No Tags</span>
+                        {% endfor %}
                     </span>
+
                     <span>
                         <i class="bi bi-clock"></i> {{ post.created_at|date:"F j, Y, P" }}
                     </span>
@@ -51,7 +61,7 @@
                 </div>
                 {% endif %}
 
-                <!-- Like / Bookmark Buttons -->
+                <!-- Like & Bookmark Buttons -->
                 <div class="d-flex gap-2 mb-3">
                     <form method="POST" action="{% url 'toggle_like' post.pk %}">
                         {% csrf_token %}
@@ -83,34 +93,33 @@
                 <h3 class="card-title h5 mb-4">
                     <i class="bi bi-chat-dots"></i> Comments ({{ comments.count }})
                 </h3>
-                {% if comments %}
-                    {% for comment in comments %}
-                        <div class="comment mb-3 p-3 border rounded">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div class="comment-header">
-                                    <strong class="text-light">{{ comment.user.username }}</strong> 
-                                    <small class="text-muted ms-2">
-                                        <i class="bi bi-clock"></i> {{ comment.created_at|date:"F j, Y, P" }}
-                                    </small>
-                                </div>
-                                {% if user == comment.user %}
+
+                {% for comment in comments %}
+                    <div class="comment mb-3 p-3 border rounded">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="comment-header">
+                                <strong class="text-light">{{ comment.user.username }}</strong> 
+                                <small class="text-muted ms-2">
+                                    <i class="bi bi-clock"></i> {{ comment.created_at|date:"F j, Y, P" }}
+                                </small>
+                            </div>
+                            {% if user == comment.user %}
                                 <form action="{% url 'comment_delete' comment.pk %}" method="POST" class="d-inline">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"
                                             onclick="return confirm('Are you sure you want to delete this comment?')">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
-                                {% endif %}
-                            </div>
-                            <div class="comment-content mt-2 text-light">
-                                {{ comment.content|linebreaks }}
-                            </div>
+                            {% endif %}
                         </div>
-                    {% endfor %}
-                {% else %}
+                        <div class="comment-content mt-2 text-light">
+                            {{ comment.content|linebreaks }}
+                        </div>
+                    </div>
+                {% empty %}
                     <p class="text-muted">No comments yet. Be the first to comment!</p>
-                {% endif %}
+                {% endfor %}
             </div>
         </div>
 
@@ -121,13 +130,11 @@
                 <h5 class="card-title">Add a Comment</h5>
                 <form method="POST">
                     {% csrf_token %}
-                    
+
                     {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            {{ form.non_field_errors }}
-                        </div>
+                        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
                     {% endif %}
-                    
+
                     <div class="mb-3">
                         {{ form.content|add_class:"form-control mb-2" }}
                         {{ form.content.errors }}
@@ -142,6 +149,7 @@
                 <a href="{% url 'login' %}">Login</a> to post a comment.
             </p>
         {% endif %}
+
     </div>
 </div>
 {% endblock %}

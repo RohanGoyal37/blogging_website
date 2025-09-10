@@ -10,10 +10,6 @@ class RegisterForm(UserCreationForm):
         model = User
         fields = ['username', 'email', 'password1', 'password2']
 
-class Meta:
-    model = Post
-    fields = ['title', 'content', 'featured_image']
-
 
 class PostForm(forms.ModelForm):
     category = forms.ChoiceField(
@@ -48,6 +44,10 @@ class PostForm(forms.ModelForm):
         # If editing, prepopulate tags as comma-separated
         if self.instance.pk:
             self.fields['tags'].initial = ', '.join([tag.name for tag in self.instance.tags.all()])
+    
+    class Meta:
+        model = Post
+        fields = ['title', 'content', 'excerpt', 'featured_image']
 
     def clean(self):
         cleaned_data = super().clean()
