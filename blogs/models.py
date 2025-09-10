@@ -17,12 +17,25 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class Tag(models.Model):
+    name = models.CharField(max_length=30, unique=True)
+    slug = models.SlugField(unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
 class Post(models.Model):
     # Basic post info
     title = models.CharField(max_length=200)
     content = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    tags = models.ManyToManyField('Tag', blank=True, related_name='posts')
     
     # Timestamps for tracking
     created_at = models.DateTimeField(auto_now_add=True)

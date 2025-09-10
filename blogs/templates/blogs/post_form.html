@@ -27,6 +27,13 @@
                         {{ form.new_category|add_class:"form-control mb-2" }}
                     </div>
 
+
+                    <div class="mb-3">
+                        <label for="id_tags" class="form-label">Tags</label>
+                        {{ form.tags|add_class:"form-control mb-2" }}
+                        <small class="form-text text-muted">Separate tags with commas (e.g. python, django, web)</small>
+                    </div>
+
                     <div class="mb-3">
                         <label for="id_content" class="form-label">Content</label>
                         {{ form.content|add_class:"form-control mb-2" }}

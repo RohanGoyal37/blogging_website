@@ -1,0 +1,29 @@
+{% extends 'blogs/base.html' %}
+{% block content %}
+<div class="hero-section">
+    <div class="hero-title">Welcome to DevBlog</div>
+    <div class="hero-tagline">A vibrant community for developers to share knowledge, stories, and experiences.<br>Join us and start your blogging journey today!</div>
+    <div class="cta-buttons">
+        <a href="{% url 'register' %}" class="cta-btn">Get Started</a>
+        <a href="{% url 'login' %}" class="cta-btn cta-btn-alt">Login</a>
+    </div>
+</div>
+
+<div class="features-section">
+    <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3>Write & Share</h3>
+        <p>Publish your own articles, tutorials, and stories. Inspire and help others with your knowledge.</p>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">💬</div>
+        <h3>Engage & Connect</h3>
+        <p>Comment, like, and bookmark posts. Connect with fellow developers and grow your network.</p>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <h3>Discover & Learn</h3>
+        <p>Explore trending topics, categories, and expert insights. Stay updated with the latest in tech.</p>
+    </div>
+</div>
+{% endblock %}

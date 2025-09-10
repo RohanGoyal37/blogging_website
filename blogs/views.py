@@ -6,16 +6,24 @@ from .forms import RegisterForm, PostForm, CommentForm
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-# Main page view - shows all blog posts
+
+# Main page view - shows all blog posts (only for logged-in users)
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def index(request):
-    # Get all posts, newest first
     posts = Post.objects.all().order_by('-created_at')
-    # Get categories for the sidebar
     categories = Category.objects.all()
     return render(request, 'blogs/index.html', {
-        'posts': posts, 
+        'posts': posts,
         'categories': categories
     })
+
+# Public home page for non-logged-in users
+def public_home(request):
+    if request.user.is_authenticated:
+        return redirect('index')
+    return render(request, 'blogs/public_home.html')
 
 # Single post page with comments
 def post_detail(request, pk):
@@ -57,30 +65,21 @@ def register(request):
 @login_required
 def post_create(request):
     if request.method == "POST":
-        # Handle both text and file data (for images)
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            try:
-                # Create post but don't save yet
-                post = form.save(commit=False)
-                post.author = request.user  # Set the current user as author
-                
-                # Figure out which category to use
-                category_choice = form.cleaned_data.get('category')
-                if category_choice == 'other':
-                    new_cat_name = form.cleaned_data.get('new_category')
-                    if new_cat_name:
-                        category, created = Category.objects.get_or_create(name=new_cat_name)
-                        post.category = category
-                else:
-                    category = Category.objects.get(id=int(category_choice))
-                    post.category = category
-
-                post.save()
-                return redirect('post_detail', pk=post.pk)
-            except Exception as e:
-                print(f"Error saving post: {e}")
-                form.add_error(None, "Error saving the post. Please try again.")
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()  # Save to get an ID
+            # Handle tags after post is saved
+            tag_names = [t.strip() for t in form.cleaned_data.get('tags', '').split(',') if t.strip()]
+            from .models import Tag
+            tag_objs = []
+            for tag_name in tag_names:
+                tag_obj, _ = Tag.objects.get_or_create(name=tag_name)
+                tag_objs.append(tag_obj)
+            post.tags.set(tag_objs)
+            form.save_m2m()
+            return redirect('post_detail', pk=post.pk)
     else:
         form = PostForm()
     return render(request, 'blogs/post_form.html', {'form': form})
@@ -168,3 +167,12 @@ def toggle_bookmark(request, pk):
     else:
         post.bookmarks.add(request.user)
     return HttpResponseRedirect(reverse('post_detail', args=[str(pk)]))
+
+@login_required
+def my_bookmarks(request):
+    posts = Post.objects.filter(bookmarks=request.user).order_by('-created_at')
+    categories = Category.objects.all()
+    return render(request, 'blogs/my_bookmarks.html', {
+        'posts': posts,
+        'categories': categories
+    })

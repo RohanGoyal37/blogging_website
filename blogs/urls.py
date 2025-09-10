@@ -7,7 +7,8 @@ from . import views
 
 # List of URL patterns - Django matches URLs from top to bottom
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.public_home, name='public_home'),
+    path('home/', views.index, name='index'),
     path('post/<int:pk>/', views.post_detail, name='post_detail'),
     path('post/new/', views.post_create, name='post_create'),
     path('post/<int:pk>/edit/', views.post_edit, name='post_edit'),
@@ -20,4 +21,5 @@ urlpatterns = [
     path('search/', views.search_posts, name='search_posts'),
     path('post/<int:pk>/like/', views.toggle_like, name='toggle_like'),
     path('post/<int:pk>/bookmark/', views.toggle_bookmark, name='toggle_bookmark'),
+    path('bookmarks/', views.my_bookmarks, name='my_bookmarks'),
 ]

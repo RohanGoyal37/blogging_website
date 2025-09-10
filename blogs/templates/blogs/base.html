@@ -39,20 +39,21 @@
                 </div>
             </form>
 
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-center gap-2">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'post_create' %}active{% endif %}" 
-                           href="{% url 'post_create' %}">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'post_create' %}active{% endif %}" href="{% url 'post_create' %}">
                             <i class="bi bi-plus-lg"></i> New Post
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'my_bookmarks' %}active{% endif %}" href="{% url 'my_bookmarks' %}">
+                            <i class="bi bi-bookmark"></i> My Bookmarks
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link p-0" href="#" role="button" 
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="avatar-circle">
-                                {{ user.username|make_list|first|upper }}
-                            </div>
+                        <a class="nav-link p-0 d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="avatar-circle me-2">{{ user.username|make_list|first|upper }}</div>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li>
@@ -74,20 +75,15 @@
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" 
-                           href="{% url 'login' %}">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" href="{% url 'login' %}">
                             <i class="bi bi-box-arrow-in-right"></i> Login
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}" 
-                           href="{% url 'register' %}">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}" href="{% url 'register' %}">
                             <i class="bi bi-person-plus"></i> Register
                         </a>
                     </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#"> <i class="bi bi-bookmark"></i> My Bookmarks</a>
-                  </li>                  
                 {% endif %}
             </ul>
         </div>

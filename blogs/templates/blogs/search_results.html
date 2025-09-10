@@ -1,0 +1,23 @@
+{% extends 'blogs/base.html' %}
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Search Results{% if query %} for "{{ query }}"{% endif %}</h2>
+    {% if posts %}
+        <div class="row">
+            {% for post in posts %}
+                <div class="col-md-8 mx-auto mb-4">
+                    <div class="card h-100 shadow-sm" style="background: var(--bg-accent); border: 1px solid var(--border-color); border-radius: 16px;">
+                        <div class="card-body">
+                            <h4 class="card-title mb-2" style="color: var(--text-primary); font-weight: 700;">{{ post.title }}</h4>
+                            <p class="card-text mb-3" style="color: var(--text-secondary); font-size: 1.1rem;">{{ post.excerpt|default:post.content|truncatewords:30 }}</p>
+                            <a href="{% url 'post_detail' post.pk %}" class="btn" style="background: var(--accent-color); color: #fff; font-weight: 600; border-radius: 8px; padding: 10px 28px;">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No posts found matching your search.</p>
+    {% endif %}
+</div>
+{% endblock %}
