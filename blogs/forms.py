@@ -38,9 +38,13 @@ class PostForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        category_choices = [(str(category.id), category.name) for category in Category.objects.all()]
+        categories = list(Category.objects.all())
+        category_choices = [(str(category.id), category.name) for category in categories]
         category_choices.append(('other', '+ Add New Category'))
         self.fields['category'].choices = category_choices
+        # If no categories, default to 'other' and show new category input
+        if not categories:
+            self.initial['category'] = 'other'
         # If editing, prepopulate tags as comma-separated
         if self.instance.pk:
             self.fields['tags'].initial = ', '.join([tag.name for tag in self.instance.tags.all()])

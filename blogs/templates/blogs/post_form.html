@@ -22,7 +22,7 @@
                         {{ form.category|add_class:"form-select mb-2" }}
                     </div>
 
-                    <div class="mb-3" id="newCategoryDiv" style="display: none;">
+                    <div class="mb-3{% if form.initial.category != 'other' %} d-none{% endif %}" id="newCategoryDiv">
                         <label for="id_new_category" class="form-label">Add New Category</label>
                         {{ form.new_category|add_class:"form-control mb-2" }}
                     </div>
@@ -53,10 +53,16 @@
                         document.getElementById('id_category').addEventListener('change', function() {
                             const newCategoryDiv = document.getElementById('newCategoryDiv');
                             if (this.value === 'other') {
-                                newCategoryDiv.style.display = 'block';
+                                newCategoryDiv.classList.remove('d-none');
                             } else {
-                                newCategoryDiv.style.display = 'none';
+                                newCategoryDiv.classList.add('d-none');
                                 document.getElementById('id_new_category').value = '';
+                            }
+                        });
+                        // Show new category input if no categories exist (dropdown is set to 'other')
+                        window.addEventListener('DOMContentLoaded', function() {
+                            if (document.getElementById('id_category').value === 'other') {
+                                document.getElementById('newCategoryDiv').classList.remove('d-none');
                             }
                         });
                     </script>
